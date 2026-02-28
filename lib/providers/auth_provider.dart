@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/services/auth_service.dart';
+import '../data/services/api_service.dart';
 
 // Auth Service Provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -50,6 +51,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true);
     final isLoggedIn = await _authService.isLoggedIn();
     final username = await _authService.getUsername();
+
+    // Restore the ApiService token cache so the Dio interceptor can attach
+    // Authorization: Bearer on all requests after a page refresh.
+    if (isLoggedIn) {
+      final token = await _authService.getToken();
+      if (token != null && token.isNotEmpty) {
+        ApiService.setToken(token);
+        print('[AUTH PROVIDER] Token cache restored from storage.');
+      }
+    } else {
+      ApiService.clearToken();
+    }
+
     state = state.copyWith(
       isAuthenticated: isLoggedIn,
       username: username,
