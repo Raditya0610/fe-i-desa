@@ -84,6 +84,10 @@ class AuthService {
         await _write(_tokenKey, token);
         await _write(_usernameKey, username);
 
+        // Cache token in ApiService so the Dio interceptor can attach it
+        // as Authorization: Bearer header on all subsequent requests.
+        ApiService.setToken(token);
+
         // Extract and save village_id if available in response
         if (data.containsKey('user')) {
           final user = data['user'] as Map<String, dynamic>;
@@ -118,8 +122,9 @@ class AuthService {
     try {
       await _api.post(ApiConstants.logout);
 
-      // Clear storage and cookies
+      // Clear storage, cookies, and cached token
       await _deleteAll();
+      ApiService.clearToken();
       if (AppConfig.useMockApi) {
         await _mockApiService.clearAuth();
       } else {
@@ -133,6 +138,7 @@ class AuthService {
     } catch (e) {
       // Even if the API call fails, clear local data
       await _deleteAll();
+      ApiService.clearToken();
       if (AppConfig.useMockApi) {
         await _mockApiService.clearAuth();
       } else {
@@ -191,20 +197,6 @@ class AuthService {
   // Get stored token
   Future<String?> getToken() async {
     return await _read(_tokenKey);
-  }
-
-  // Static version used by the Dio interceptor in ApiService so both
-  // always read from the same storage layer (in-memory or secure storage).
-  static Future<String?> getStoredToken() async {
-    if (_useInMemoryStorage) {
-      return _mockStorage[_tokenKey];
-    }
-    try {
-      const storage = FlutterSecureStorage();
-      return await storage.read(key: _tokenKey);
-    } catch (_) {
-      return _mockStorage[_tokenKey];
-    }
   }
 
   // Get stored username

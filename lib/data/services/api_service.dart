@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import '../../core/constants/api_constants.dart';
-import 'auth_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -10,6 +9,21 @@ class ApiService {
 
   late final Dio _dio;
   late final CookieJar _cookieJar;
+
+  // In-memory token cache — set by AuthService after login, cleared on logout.
+  // This avoids a circular import with AuthService and is more reliable than
+  // reading from FlutterSecureStorage inside the interceptor (which can fail on web).
+  static String? _cachedToken;
+
+  static void setToken(String token) {
+    _cachedToken = token;
+    print('[API SERVICE] Token cached in memory.');
+  }
+
+  static void clearToken() {
+    _cachedToken = null;
+    print('[API SERVICE] Token cleared from memory.');
+  }
 
   ApiService._internal() {
     _cookieJar = CookieJar();
@@ -33,11 +47,12 @@ class ApiService {
     // calling a backend on Railway) where SameSite cookie policies block cookies.
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // Read token via AuthService so we use the same storage layer
-        // (including the in-memory fallback) that the login flow writes to.
-        final token = await AuthService.getStoredToken();
+        // Read token from in-memory cache (set by AuthService on login).
+        final token = _cachedToken;
+        print('[AUTH INTERCEPTOR] Token found: ${token != null && token.isNotEmpty ? "YES (${token.length} chars)" : "NO - header will NOT be set"}');
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
+          print('[AUTH INTERCEPTOR] Authorization header set.');
         }
         print('[REQUEST] ${options.method} ${options.uri}');
         print('[REQUEST HEADERS] ${options.headers}');
