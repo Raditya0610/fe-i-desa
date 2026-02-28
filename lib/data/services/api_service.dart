@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/constants/api_constants.dart';
+import 'auth_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -33,8 +33,9 @@ class ApiService {
     // calling a backend on Railway) where SameSite cookie policies block cookies.
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        const storage = FlutterSecureStorage();
-        final token = await storage.read(key: 'auth_token');
+        // Read token via AuthService so we use the same storage layer
+        // (including the in-memory fallback) that the login flow writes to.
+        final token = await AuthService.getStoredToken();
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }

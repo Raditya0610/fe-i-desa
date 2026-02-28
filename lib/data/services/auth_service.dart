@@ -193,6 +193,20 @@ class AuthService {
     return await _read(_tokenKey);
   }
 
+  // Static version used by the Dio interceptor in ApiService so both
+  // always read from the same storage layer (in-memory or secure storage).
+  static Future<String?> getStoredToken() async {
+    if (_useInMemoryStorage) {
+      return _mockStorage[_tokenKey];
+    }
+    try {
+      const storage = FlutterSecureStorage();
+      return await storage.read(key: _tokenKey);
+    } catch (_) {
+      return _mockStorage[_tokenKey];
+    }
+  }
+
   // Get stored username
   Future<String?> getUsername() async {
     return await _read(_usernameKey);
