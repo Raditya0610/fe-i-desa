@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/constants/api_constants.dart';
 
 class ApiService {
@@ -24,12 +25,19 @@ class ApiService {
       },
     ));
 
-    // Add cookie manager interceptor
+    // Add cookie manager interceptor (still useful for native platforms)
     _dio.interceptors.add(CookieManager(_cookieJar));
 
-    // Add logging interceptor for debugging
+    // Add Bearer token interceptor — attaches the stored JWT as Authorization header.
+    // This is required for cross-origin deployments (e.g., Flutter web on Vercel
+    // calling a backend on Railway) where SameSite cookie policies block cookies.
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
+      onRequest: (options, handler) async {
+        const storage = FlutterSecureStorage();
+        final token = await storage.read(key: 'auth_token');
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
         print('[REQUEST] ${options.method} ${options.uri}');
         print('[REQUEST HEADERS] ${options.headers}');
         if (options.data != null) {
