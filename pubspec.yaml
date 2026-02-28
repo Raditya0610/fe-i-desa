@@ -1,10 +1,10 @@
 name: fe_apps_i_desa
 description: Flutter desktop application for Apps I-Desa village management system
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -23,7 +23,7 @@ dependencies:
   dio_cookie_manager: ^3.1.1
 
   # Storage
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^8.1.0
   shared_preferences: ^2.2.2
 
   # Forms & Validation
@@ -61,3 +61,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+dependency_overrides:
+  objective_c: ^9.3.0
