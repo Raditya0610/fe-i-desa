@@ -3,7 +3,7 @@ class ApiConstants {
   //   flutter run --dart-define=BASE_URL=http://localhost:3000
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://be-apps-i-desa.vercel.app',
+    defaultValue: 'https://be-apps-i-desa-production.up.railway.app',
   );
   static const String apiPrefix = '/api';
 

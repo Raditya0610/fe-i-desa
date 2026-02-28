@@ -60193,7 +60193,7 @@ A.aoZ.prototype={
 ag2(){var s,r,q,p=this,o=A.buN()
 p.b!==$&&A.bf()
 p.b=o
-s=A.bu4("https://be-apps-i-desa.vercel.app",B.uq,B.ago,B.uq,new A.ap_())
+s=A.bu4("https://be-apps-i-desa-production.up.railway.app",B.uq,B.ago,B.uq,new A.ap_())
 r=new A.a05(A.b([B.PD],t.i6))
 r.S(r,B.a9p)
 q=new A.asp($,r,$,new A.awW(51200),!1)
