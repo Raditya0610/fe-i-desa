@@ -1,0 +1,63 @@
+name: fe_apps_i_desa
+description: Flutter desktop application for Apps I-Desa village management system
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Navigation
+  go_router: ^17.0.0
+
+  # HTTP & API
+  dio: ^5.4.0
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+
+  # Storage
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.2
+
+  # Forms & Validation
+  flutter_form_builder: ^10.2.0
+  form_builder_validators: ^11.2.0
+
+  # Charts
+  fl_chart: ^1.1.1
+
+  # UI Components
+  forui: ^0.16.0
+  cupertino_icons: ^1.0.6
+
+  # Utilities
+  intl: ^0.20.2
+  uuid: ^4.3.3
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.8.1
+
+  # Export
+  excel: ^4.0.6
+  path_provider: ^2.1.5
+  csv: ^6.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.7
+  riverpod_generator: ^2.4.3
+  freezed: ^3.1.0
+  json_serializable: ^6.7.1
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
